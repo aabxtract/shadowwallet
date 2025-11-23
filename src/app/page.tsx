@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Logo } from '@/components/icons/logo';
-import { Settings, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
+import { Settings, ArrowUpRight, ArrowDownLeft, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Balance } from '@/components/balance';
 import { TransactionHistory } from '@/components/transaction-history';
 import { StealthSuggestions } from '@/components/stealth-suggestions';
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from '@/components/ui/sidebar';
 
 export default function Home() {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -52,42 +53,65 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center bg-background text-foreground p-4 sm:p-6 md:p-8">
-      <header className="w-full max-w-2xl flex justify-between items-center">
-        <Logo />
-        <h1 className="text-xl font-bold absolute left-1/2 -translate-x-1/2 tracking-tighter bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">Shadow Wallet</h1>
-        <Button variant="ghost" size="icon">
-          <Settings className="h-5 w-5 text-muted-foreground hover:text-foreground" />
-          <span className="sr-only">Settings</span>
-        </Button>
-      </header>
+    <div className="flex min-h-screen w-full bg-background text-foreground">
+      <Sidebar collapsible="icon" className="group-data-[collapsible=icon]:border-r-0">
+        <SidebarHeader>
+          <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+             <Logo />
+             <h1 className="text-xl font-bold tracking-tighter bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent group-data-[collapsible=icon]:hidden">Shadow</h1>
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip="Send" size="lg">
+                <ArrowUpRight />
+                <span>Send</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip="Receive" size="lg">
+                <ArrowDownLeft />
+                <span>Receive</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton tooltip="Settings" size="lg">
+                <Settings />
+                <span>Settings</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarContent>
+      </Sidebar>
+      <main className="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8">
+         <header className="w-full max-w-2xl flex justify-between items-center md:hidden">
+            <div className="flex items-center gap-2">
+              <Logo />
+              <h1 className="text-xl font-bold tracking-tighter bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">Shadow Wallet</h1>
+            </div>
+            <SidebarTrigger>
+              <PanelLeft />
+            </SidebarTrigger>
+        </header>
 
-      <main className="flex flex-col items-center w-full max-w-md flex-1 py-12 space-y-8">
-        <Balance
-          isUnlocked={isUnlocked}
-          balance={balance}
-          onUnlock={() => setIsUnlocked(true)}
-        />
-        
-        <div className="grid grid-cols-2 gap-4 w-full">
-          <Button variant="outline" className="h-14 text-lg bg-transparent border-primary/50 hover:bg-primary/20 hover:border-accent hover:text-accent-foreground transition-all duration-300">
-            <ArrowUpRight className="mr-2 h-5 w-5" /> Send
-          </Button>
-          <Button variant="outline" className="h-14 text-lg bg-transparent border-primary/50 hover:bg-primary/20 hover:border-accent hover:text-accent-foreground transition-all duration-300">
-            <ArrowDownLeft className="mr-2 h-5 w-5" /> Receive
-          </Button>
+        <div className="flex flex-col items-center w-full max-w-md flex-1 py-12 space-y-8">
+          <Balance
+            isUnlocked={isUnlocked}
+            balance={balance}
+            onUnlock={() => setIsUnlocked(true)}
+          />
+
+          <TransactionHistory transactions={mockTransactions} />
         </div>
-
-        <TransactionHistory transactions={mockTransactions} />
-
+        
+        <footer className="w-full max-w-md pb-4">
+          <StealthSuggestions
+              homeScreenData={JSON.stringify(homeScreenData)}
+              transactionDetailsData={JSON.stringify(transactionDetailsData)}
+          />
+        </footer>
       </main>
-      
-      <footer className="w-full max-w-md pb-4">
-        <StealthSuggestions
-            homeScreenData={JSON.stringify(homeScreenData)}
-            transactionDetailsData={JSON.stringify(transactionDetailsData)}
-        />
-      </footer>
     </div>
   );
 }
